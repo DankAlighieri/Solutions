@@ -2,14 +2,13 @@
 #include <stdlib.h>
 
 int main() {
-    int *p = NULL, a, count = 0, i;
+    int *p=NULL, a, count = 0, i;
 
     do {
         printf("\nLendo inteiro no indice %d: ", count+1);
         scanf("%d", &a);
         if (a) {
-            printf("\nRealocando mais %lld de memoria ao vetor de inteiros.", a*sizeof(int));
-            realloc(p, a*sizeof(int));
+            p = (int *) realloc(p, a*sizeof(int));
             if (!p) {
                 printf("\nErro na memoria");
                 exit(1);
@@ -17,12 +16,13 @@ int main() {
             p[count] = a;
         }
         count++;
-        printf("\nIncrementar count %d.", count);
     }while (a);
 
-    for (i = 0; i < count; i++) {
-        printf("%d ", p[i]);
+    for (i = 0; i < count - 1; i++) {
+        printf("\nElemento no Vetor[%d] = %d ",i+1, p[i]);
     }
     printf("\n");
+
+    free(p);
     return 0;
 }
