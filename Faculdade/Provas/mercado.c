@@ -20,6 +20,16 @@ void cadastro(PRODUTO **p, int *count);
 void consulta(PRODUTO *p, int count);
 void carrinho(PRODUTO *p, int count);
 
+int verificarProdutoExiste(PRODUTO *p, char *nome, int count) {
+    int encontrado, i;
+
+    for (i = 0; i < count; i++) {
+        if (!strcmp(p[i].NOME, nome)) return 1;
+    }
+    
+    return 0;
+}
+
 void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -38,6 +48,17 @@ int menu() {
     } while (op2 > 4 || op2 < 1);
 
     return op2;
+}
+
+int menuCadastro() {
+    int op3;
+    puts("Deseja cadastrar outro produto?\n");
+        printf("\t 1 - Sim\n");
+        printf("\t 2 - Nao\n");
+        scanf("%d", &op3);
+        clearInputBuffer();
+
+        return op3;
 }
 
 int main () {
@@ -82,6 +103,7 @@ int main () {
 // FUNCAO DE CADASTRO
 void cadastro(PRODUTO **p, int *count) {
     int op3;
+    char nome[tam];
     while (1) {
 
         *count+=1;
@@ -94,27 +116,26 @@ void cadastro(PRODUTO **p, int *count) {
         }
 
         printf("\nDigite o nome do produto: ");       
-        fgets((*p)[*count-1].NOME, tam, stdin);
-        (*p)[*count-1].NOME[strcspn((*p)[*count-1].NOME, "\n")] = '\0';
-        
-        printf("Digite o valor do produto (Apenas numeros): ");
-        scanf("%f", &(*p)[*count-1].VALOR);
-        clearInputBuffer();
-        
-        printf("Digite a medida do produto (Kg ou L): ");
-        fgets((*p)[*count-1].MEDIDA, tam, stdin);
-        (*p)[*count-1].MEDIDA[strcspn((*p)[*count-1].MEDIDA, "\n")] = '\0';
-        
-        printf("Digite o tipo do produto (Comida/Bebida): ");
-        fgets((*p)[*count-1].TIPO, tam, stdin);
-        (*p)[*count-1].TIPO[strcspn((*p)[*count-1].TIPO, "\n")] = '\0';
+        fgets(nome, tam, stdin);
+        nome[strcspn(nome, "\n")] = '\0';
 
-        puts("Deseja cadastrar outro produto?\n");
-        printf("\t 1 - Sim\n");
-        printf("\t 2 - Nao\n");
-        scanf("%d", &op3);
-        clearInputBuffer();
+        if(verificarProdutoExiste(*p, nome, *count)) puts("Produto ja existe!");
+        else {
+            strcpy((*p)[*count - 1].NOME, nome);
 
+            printf("Digite o valor do produto (Apenas numeros): ");
+            scanf("%f", &(*p)[*count-1].VALOR);
+            clearInputBuffer();
+            
+            printf("Digite a medida do produto (Kg ou L): ");
+            fgets((*p)[*count-1].MEDIDA, tam, stdin);
+            (*p)[*count-1].MEDIDA[strcspn((*p)[*count-1].MEDIDA, "\n")] = '\0';
+            
+            printf("Digite o tipo do produto (Comida/Bebida): ");
+            fgets((*p)[*count-1].TIPO, tam, stdin);
+            (*p)[*count-1].TIPO[strcspn((*p)[*count-1].TIPO, "\n")] = '\0';
+        }
+        op3 = menuCadastro();
         if (op3 != 1) break;
     }
     
