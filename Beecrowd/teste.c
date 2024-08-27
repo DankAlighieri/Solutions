@@ -1,11 +1,10 @@
 #include <stdio.h>
+#include <string.h>
 
 int main() {
-    int i = 97;
+    char cor1[10] = "vermelho", cor2[20]  = "branco";
     
-    printf("%c", i);
-
-
+    printf("%d", strcmp(cor1, cor2));
 
     return 0;
 }
