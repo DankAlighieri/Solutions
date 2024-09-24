@@ -9,7 +9,7 @@ typedef struct {
 
 void criar_lista(LISTA *l) { l->N = 0; }
 
-int eh_vazia(LISTA *l) { return ((l->N == 0) ? 1 : 0); }
+int eh_vazia(LISTA *l) { return (!l->N); }
 
 int tam(LISTA *l) { return l->N; }
 

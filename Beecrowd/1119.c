@@ -3,109 +3,77 @@
 
 typedef struct nodo {
   int pos;
-  struct nodo *ant;
   struct nodo *next;
+  struct nodo *prev;
 } NODO;
 
 typedef NODO *lista;
 
-void cria_lista(lista *pl) { *pl = NULL; }
+void cria_lista(lista *pl, int N) {
+  lista tail;
 
-int tam(lista l) {
-  int i;
-  NODO *aux;
+  for (int i = 1; i <= N; i++) {
+    lista novo = (lista) malloc(sizeof(NODO));
+    novo->pos = i;
 
-  if (!l) {
-    return 0;
+    if (i == 1) {
+      *pl = novo;
+      novo->prev = novo;
+    } else {
+      tail->next = novo;
+      novo->prev = tail;
+    }
+    tail = novo;
   }
-
-  for (i = 1, aux = l->next; aux != l; i++, aux = aux->next)
-    ;
-
-  return i;
+  tail->next = *pl;
+  (*pl)->prev = tail;
 }
 
-void ins(lista *pl, int N, int tot) {
-  if (!N) {
-    return;
-  }
+lista ret(lista nodeRem) {
+  lista adj = nodeRem->next;
 
-  NODO *novo, *aux;
+  adj->prev = nodeRem->prev;
+  nodeRem->prev->next = adj;
 
-  // alocando memoria
-  novo = (NODO *)malloc(sizeof(NODO));
-  if (!novo) {
-    puts("Mem err");
-    return;
-  }
-
-  // setando posicao
-  novo->pos = tot - N + 1;
-
-  // lista vazia
-  if (!(*pl)) {
-    novo->next = novo;
-    novo->ant = novo;
-  }
-
-  /*
-    Lista nao vazia
-    apenas um caso de insercao - ultimo elemento
-  */
-  else {
-    NODO *aux = *pl;
-
-    novo->next = aux->next;
-    novo->ant = aux;
-    aux->next->ant = novo;
-    aux->next = novo;
-  }
-
-  // referencia externa sera o ultimo nodo
-  *pl = novo;
-  ins(pl, N - 1, tot);
+  free(nodeRem);
+  return adj;
 }
 
-void ret(NODO *node) {
-  node->ant->next = node->next;
-  node->next->ant = node->ant;
-  free(node);
-}
+void solve(lista l, int k, int m, int n){
+  lista hor = l, ant = l->prev;
+  int f = 1;
+  while (n) {
+    if(!f) putchar(',');
+    f = 0;
+    for (int i = 1; i < k; i++) {
+      hor = hor->next;
+    }
+    for (int i = 1; i < m; i++) {
+      ant = ant->prev;
+    }
 
-void search(lista *pl, int k, int m) {
-  NODO *nd, *ne;
-  int posN, posA;
-
-  
-}
-
-void mostra(lista l) {
-  NODO *aux = l->next;
-  int i = 0;
-  do {
-    i++;
-    printf("%d : %d\n", i, aux->pos);
-    aux = aux->next;
-  } while (aux != l->next);
+    if (hor != ant) {
+      printf("%3d%3d", hor->pos, ant->pos);
+      ant = ret(ant);
+      hor = ret(hor);
+      n-=2;
+    } else {
+      printf("%3d", hor->pos);
+      ant = hor = ret(hor);
+      n--;
+    }
+    ant = ant->prev;
+  }
+  printf("\n");
 }
 
 int main() {
-  lista l;
-  int k, m, N;
-
-  cria_lista(&l);
-  do {
-    scanf("%d %d %d", &N, &k, &m);
-
-    if (N && k && m) {
-      ins(&l, N, N);
-      /*
-      while (l) {
-        // search(&l, k, m);
-       };
-      */
-    }
-  } while (N);
+  int n, k, m;
+  while (scanf("%d %d %d", &n, &k, &m), n) {
+    lista l = NULL;
+    cria_lista(&l, n);
+    solve(l, k, m, n);
+  }
 
   return 0;
 }
