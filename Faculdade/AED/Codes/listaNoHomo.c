@@ -1,3 +1,5 @@
+/*A IMPLEMENTAR*/
+
 #include <stdio.h>
 #include <stdlib.>
 
@@ -41,6 +43,8 @@ void ins(lista *pl, union inf param, int k, int etype){
         puts("Mem err");
         return;
     }
+}
 
-    if 
+int main() {
+    return 0;
 }

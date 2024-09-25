@@ -46,6 +46,8 @@ void ins(lista *l, int k, int v) {
     novo->v = v;
 
     if (k == 1) {
+      // Caso a lista esteja vazia, ja apontara para nulo
+      // Caso esteja preenchida, aponta para o antigo primeiro
       novo->next = *l;
       *l = novo;
     } else {
@@ -55,6 +57,23 @@ void ins(lista *l, int k, int v) {
       novo->next = aux->next;
       aux->next = novo;
     }
+  }
+}
+
+void insRec(lista *l, int k, int v) {
+  if (k < 1 || k > tam(*l) + 1) {
+    puts("Pos inv");
+  } else if (k == 1) {
+    lista novo = (nodo *)malloc(sizeof(nodo));
+    if (!novo) {
+      puts("Mem err");
+      return;
+    }
+    novo->v = v;
+    novo->next = *l;
+    *l = novo;
+  } else {
+    insRec(&((*l)->next), k - 1, v);
   }
 }
 
@@ -97,14 +116,51 @@ void mostra(lista l) {
   }
 }
 
+int pertence(lista l, int v) {
+  if (!l) {
+    puts("Lista vazia");
+  } else {
+    while (l) {
+      l = l->next;
+      if (l->v == v) {
+        return 1;
+      }
+    }
+    return 0;
+  }
+}
+
+int eh_ord(lista l) {
+  if (!l || !(l->next))
+    return 1;
+  if (l->v > l->next->v) {
+    return 0;
+  }
+  return eh_ord(l->next);
+}
+
+void geraRec(lista *l, int inicio, int fim) {
+  if (inicio > fim) {
+    return;
+  }
+  lista novo = (nodo *)malloc(sizeof(nodo));
+  novo->v = inicio;
+  novo->next = *l; 
+  *l = novo;
+  geraRec(&((*l)->next), inicio + 1, fim);
+}
+
+// [*l] -> null  [*l] -> null \\ [novo]->[*l]->next \\ []; 
 int main() {
   lista l;
   cria(&l);
-  printf("%s\n", vazia(l) ? "Lista vazia" : "Lista preenchida");
-  for (int i = 1, v = 10; i <= 5; v += 10) {
-    ins(&l, i++, v);
-  }
-//   mostra(l);
-  ret(&l, 1);
+  // printf("%s\n", vazia(l) ? "Lista vazia" : "Lista preenchida");
+  // for (int i = 1, v = 10; i <= 5; v += 10) {
+  //   ins(&l, i++, v);
+  // }
+  // //   mostra(l);
+  // ret(&l, 1);
+
+  geraRec(&l, 1, 20);
   mostra(l);
 }
