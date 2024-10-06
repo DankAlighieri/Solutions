@@ -1,87 +1,69 @@
+#include "arvoreBin.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct nodo {
-    int info;
-    struct nodo *left;
-    struct nodo *right;
-    struct nodo *father;
-} nodo;
-
-typedef nodo * arvore;
-
-void criaArvore(arvore *a, int x){
-    *a = (arvore) malloc(sizeof(nodo));
-    if (!(*a)) {
-        puts("Mem err");
-        return;
-    }
+void makeTree(arvoreBin *a, int x) {
+  *a = (arvoreBin)malloc(sizeof(nodo));
+  if (!(*a))
+    puts("Mem err");
+  else {
     (*a)->info = x;
-    (*a)->left = (*a)->right = (*a)->father = NULL;
+    (*a)->father = (*a)->right = (*a)->left = NULL;
+  };
 }
 
-void setLeft(arvore a, int x){
-    a->left = (arvore) malloc(sizeof(nodo));
-    if (!(a->left)) {
-        puts("mem err");
-        return;
-    }
+void setLeft(arvoreBin a, int x) {
+  a->left = malloc(sizeof(nodo));
+  if (!a->right)
+    puts("mem err");
+  else {
     a->left->info = x;
-    a->left->left = NULL;
-    a->left->right = NULL;
+    a->left->left = a->left->right = NULL;
     a->left->father = a;
+  }
 }
 
-void setLeft(arvore a, int x){
-    a->right = (arvore) malloc(sizeof(nodo));
-    if (!(a->right)) {
-        puts("mem err");
-        return;
-    }
+void setRight(arvoreBin a, int x) {
+  a->right = malloc(sizeof(nodo));
+  if (!a->right)
+    puts("mem err");
+  else {
     a->right->info = x;
-    a->right->left = NULL;
-    a->right->right = NULL;
+    a->right->left = a->right->right = NULL;
     a->right->father = a;
+  }
 }
 
-int info(arvore a) {
-    return a->info;
+int isLeft(arvoreBin a) {
+  if (a->father) {
+    if (a == a->father->left)
+      return 1;
+  }
+  return 0;
 }
 
-arvore left(arvore a) {
-    return a->left;
+int isRight(arvoreBin a) {
+  if (a->father)
+    return !isLeft(a);
+  return 0;
 }
 
-arvore right(arvore a) {
-    return a->right;
-}
+int info(arvoreBin a) { return a->info; }
 
-arvore father(arvore a) {
-    return a->father;
-}
+arvoreBin left(arvoreBin a) { return a->left; }
 
-int isLeft(arvore a) {
-    nodo *q = a->father;
-    if (!q) return 0;
-    if (q->left == a) return 1;
-    return 0;
-}
+arvoreBin right(arvoreBin a) { return a->right; }
 
-int isRight(arvore a) {
-    if (a->father) {
-        return (!isLeft(a));
+arvoreBin brother(arvoreBin a) {
+  if (a->father) {
+    if (isLeft(a)) {
+      return a->father->right;
     }
-    return 0;
+    return a->father->left;
+  }
+  return NULL;
 }
 
-arvore brother(arvore a) {
-    if (a->father) {
-        if (isLeft(a)) return (a->father)->right;
-        else return (a->father)->left;
-    }
-}
+arvoreBin father(arvoreBin a) { return a->father; }
 
-int main() {
-
-    return 0;
-}
+int main() { return 0; }
