@@ -1,14 +1,14 @@
 #ifndef FILA_H
 #define FILA_H
 
-typedef struct nodo {
+typedef struct node {
     int inf;
-    struct nodo *next;
-} nodo;
+    struct node *next;
+} node;
 
 typedef struct {
-    nodo *inicio;
-    nodo *fim;
+    node *inicio;
+    node *fim;
 } descritor;
 
 typedef descritor * fila;

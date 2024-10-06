@@ -19,5 +19,6 @@ arvoreBin brother(arvoreBin);
 arvoreBin father(arvoreBin);
 int isLeft(arvoreBin);
 int isRight(arvoreBin);
+void buscaLargura(arvoreBin);
 
 #endif

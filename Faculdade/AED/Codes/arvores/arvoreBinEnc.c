@@ -1,4 +1,5 @@
 #include "arvoreBin.h"
+#include "../filas/fila.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -62,6 +63,11 @@ arvoreBin brother(arvoreBin a) {
     return a->father->left;
   }
   return NULL;
+}
+
+void buscaLargura(arvoreBin a) {
+    fila leafQueue;
+    
 }
 
 arvoreBin father(arvoreBin a) { return a->father; }

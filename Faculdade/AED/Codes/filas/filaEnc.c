@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 void cria(fila *f) {
-  (*f) = (fila)malloc(sizeof(nodo));
+  (*f) = (fila)malloc(sizeof(node));
   if (!(*f)) {
     puts("Mem err");
   } else {
@@ -14,7 +14,7 @@ void cria(fila *f) {
 int vazia(fila f) { return !f->inicio; }
 
 void ins(fila f, int v) {
-  nodo *novo = (nodo *)malloc(sizeof(nodo));
+  node *novo = (node *)malloc(sizeof(node));
   if (!novo) {
     puts("Mem err");
   } else {
@@ -41,7 +41,7 @@ void ret(fila f) {
   if (!(f->inicio)) {
     puts("Fila vazia");
   } else {
-    nodo *aux = f->inicio;
+    node *aux = f->inicio;
     f->inicio = f->inicio->next;
     if (!f->inicio) {
       f->fim = NULL;
@@ -61,7 +61,7 @@ int cons_ret(fila f) {
 }
 
 void destruir(fila f) {
-  nodo *aux;
+  node *aux;
   while (f->inicio) {
     aux = f->inicio;
     f->inicio = f->inicio->next;
