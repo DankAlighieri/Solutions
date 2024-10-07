@@ -1,5 +1,5 @@
 #include "arvoreBin.h"
-#include "../filas/fila.h"
+#include "fila.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -66,8 +66,67 @@ arvoreBin brother(arvoreBin a) {
 }
 
 void buscaLargura(arvoreBin a) {
-    fila leafQueue;
-    
+  fila leafQueue;
+  cria(&leafQueue);
+  if (a) {
+    ins(leafQueue, a);
+  }
+  while (!vazia(leafQueue)) {
+    printf("%d ", cons(leafQueue)->info);
+    if (left(cons(leafQueue)))
+      ins(leafQueue, left(cons(leafQueue)));
+    else if (right(cons(leafQueue)))
+      ins(leafQueue, right(cons(leafQueue)));
+    ret(leafQueue);
+  }
+}
+
+void preOrder(arvoreBin a) {
+  if (a) {
+    printf("%d ", a->info);
+    preOrder(a->left);
+    preOrder(a->right);
+  }
+}
+void inOrder(arvoreBin a) {
+  if (a) {
+    preOrder(a->left);
+    printf("%d ", a->info);
+    preOrder(a->right);
+  }
+}
+void postOrder(arvoreBin a) {
+  if (a) {
+    preOrder(a->left);
+    preOrder(a->right);
+    printf("%d ", a->info);
+  }
+}
+
+void ins_ele(arvoreBin *a, int v) {
+  if (!a) {
+    makeTree(a, v);
+  } else {
+    arvoreBin aux = *a;
+    do {
+      if (v < aux->info) {
+        if (aux->left)
+          aux = aux->left;
+        else {
+          setLeft(aux, v);
+          break;
+        }
+      }
+      if (v > aux->info) {
+        if (aux->right)
+          aux = aux->right;
+        else {
+          setRight(aux, v);
+          break;
+        }
+      }
+    } while (1);
+  }
 }
 
 arvoreBin father(arvoreBin a) { return a->father; }
