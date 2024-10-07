@@ -119,59 +119,98 @@ void ins_ele(arvoreBin *a, int v) {
           setLeft(aux, v);
           break;
         }
-      }
-      else if (v > aux->info) {
+      } else if (v > aux->info) {
         if (aux->right)
           aux = aux->right;
         else {
           setRight(aux, v);
           break;
         }
-      } else break;
+      } else
+        break; // Nao eh permitido elementos identicos na arvore de busca
     } while (1);
   }
 }
 
 void fusionRemove(arvoreBin *a) {
-  if (!(*a)) {
+  if (!(*a))
     return;
-  } else {
-    // Nova raiz
-    nodo *fthr = (*a)->left;
-    // Sub arvore a ser fundida
-    arvoreBin rightTree = (*a)->right;
 
-    // Caso a raiz antiga tenho um pai
-    if (father(*a)) {
-      // Ligando antigo pai a nova raiz
-      if (isLeft(*a))
-        (*a)->father->left = fthr ? fthr : rightTree;
-      else
-        (*a)->father->right = fthr ? fthr : rightTree;
-    }
+  // Nova raiz
+  nodo *fthr = (*a)->left;
+  // Sub arvore a ser fundida
+  arvoreBin rightTree = (*a)->right;
 
-    // Se existir apenas a subarvore direita
-    if (!fthr) {
-      fthr = (*a)->right;
-      if (fthr) {
-        fthr->father = (*a)->father;
-      }
-    } else {
-      fthr->father = (*a)->father;
-      nodo *aux = fthr;
-      // Procurando folha mais a direita
-      while (aux->right) {
-        aux = aux->right;
-      }
-      // Linkando nova subarvore
-      aux->right = rightTree;
-      if (rightTree) {
-        rightTree->father = aux;
-      }
-    }
-    free(*a);
-    *a = fthr;
+  // Caso a raiz antiga tenho um pai
+  if (father(*a)) {
+    // Ligando antigo pai a nova raiz
+    if (isLeft(*a))
+      (*a)->father->left = fthr ? fthr : rightTree;
+    else
+      (*a)->father->right = fthr ? fthr : rightTree;
   }
+
+  // Se existir apenas a subarvore direita
+  if (!fthr) {
+    fthr = (*a)->right;
+    // Atualizando o ponteiro para father
+    if (fthr) {
+      fthr->father = (*a)->father;
+    }
+  } else {
+    fthr->father = (*a)->father;
+    nodo *aux = fthr;
+    // Procurando folha mais a direita
+    while (aux->right) {
+      aux = aux->right;
+    }
+    // Linkando nova subarvore
+    aux->right = rightTree;
+    if (rightTree) {
+      rightTree->father = aux;
+    }
+  }
+  free(*a);
+  *a = fthr;
+}
+
+void copyRemoval(arvoreBin *a) {
+  if (!*a) {
+    return;
+  }
+  int profundidade = 0;
+  nodo *sucessorImediato, *aux;
+  if ((*a)->right) {
+    aux = (*a)->right;
+    while (aux->left) {
+      aux = aux->left;
+      profundidade++;
+    }
+    aux->father->left = NULL;
+    sucessorImediato = aux;
+  } else {
+    sucessorImediato = (*a)->left;
+  }
+  sucessorImediato->father = NULL;
+  if ((*a)->father) {
+    sucessorImediato->father = (*a)->father;
+    if (isLeft((*a)))
+      sucessorImediato->father->left = sucessorImediato;
+    else
+      sucessorImediato->father->right = sucessorImediato;
+  }
+
+  if (profundidade) {
+    sucessorImediato->left = (*a)->left;
+    if (sucessorImediato->left)
+      sucessorImediato->left->father = sucessorImediato;
+    sucessorImediato->right = (*a)->right;
+    if (sucessorImediato->right)
+      sucessorImediato->right->father = sucessorImediato;
+  }
+
+  free(*a);
+  *a = sucessorImediato;
 }
 
 int main() {
@@ -180,35 +219,37 @@ int main() {
   arvoreBin tree;
 
   // Criação da árvore com o nó raiz de valor 10
-  makeTree(&tree, 10);
+  makeTree(&tree, 15);
 
   // Inserindo elementos na árvore binária
-  ins_ele(&tree, 20);
-  ins_ele(&tree, 11);
-  ins_ele(&tree, 15);
-  ins_ele(&tree, 14);
-  ins_ele(&tree, 15);
   ins_ele(&tree, 30);
+  ins_ele(&tree, 20);
+  ins_ele(&tree, 40);
+  ins_ele(&tree, 10);
+  ins_ele(&tree, 5);
+  ins_ele(&tree, 11);
+  ins_ele(&tree, 12);
 
   // Testando percursos na árvore
-  printf("Pre-Order traversal: ");
-  preOrder(tree);
-  printf("\n");
+  // printf("Pre-Order traversal: ");
+  // preOrder(tree);
+  // printf("\n");
 
-  printf("In-Order traversal: ");
-  inOrder(tree);
-  printf("\n");
+  // printf("In-Order traversal: ");
+  // inOrder(tree);
+  // printf("\n");
 
-  printf("Post-Order traversal: ");
-  postOrder(tree);
-  printf("\n");
+  // printf("Post-Order traversal: ");
+  // postOrder(tree);
+  // printf("\n");
 
   // Testando busca em largura
   // printf("Busca em largura (Breadth-First Search): ");
   // buscaLargura(tree);
   // printf("\n");
 
-  fusionRemove(&tree);
+  // fusionRemove(&tree);
+  copyRemoval(&tree);
 
   printf("Busca em largura (Breadth-First Search): ");
   buscaLargura(tree);
