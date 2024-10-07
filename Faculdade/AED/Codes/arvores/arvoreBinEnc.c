@@ -15,7 +15,7 @@ void makeTree(arvoreBin *a, int x) {
 
 void setLeft(arvoreBin a, int x) {
   a->left = malloc(sizeof(nodo));
-  if (!a->right)
+  if (!a->left)
     puts("mem err");
   else {
     a->left->info = x;
@@ -65,6 +65,8 @@ arvoreBin brother(arvoreBin a) {
   return NULL;
 }
 
+arvoreBin father(arvoreBin a) { return a->father; }
+
 void buscaLargura(arvoreBin a) {
   fila leafQueue;
   cria(&leafQueue);
@@ -72,11 +74,12 @@ void buscaLargura(arvoreBin a) {
     ins(leafQueue, a);
   }
   while (!vazia(leafQueue)) {
-    printf("%d ", cons(leafQueue)->info);
-    if (left(cons(leafQueue)))
-      ins(leafQueue, left(cons(leafQueue)));
-    else if (right(cons(leafQueue)))
-      ins(leafQueue, right(cons(leafQueue)));
+    nodo *auxLeaf = cons(leafQueue);
+    printf("%d ", auxLeaf->info);
+    if (left(auxLeaf))
+      ins(leafQueue, left(auxLeaf));
+    if (right(auxLeaf))
+      ins(leafQueue, right(auxLeaf));
     ret(leafQueue);
   }
 }
@@ -90,15 +93,15 @@ void preOrder(arvoreBin a) {
 }
 void inOrder(arvoreBin a) {
   if (a) {
-    preOrder(a->left);
+    inOrder(a->left);
     printf("%d ", a->info);
-    preOrder(a->right);
+    inOrder(a->right);
   }
 }
 void postOrder(arvoreBin a) {
   if (a) {
-    preOrder(a->left);
-    preOrder(a->right);
+    postOrder(a->left);
+    postOrder(a->right);
     printf("%d ", a->info);
   }
 }
@@ -117,18 +120,98 @@ void ins_ele(arvoreBin *a, int v) {
           break;
         }
       }
-      if (v > aux->info) {
+      else if (v > aux->info) {
         if (aux->right)
           aux = aux->right;
         else {
           setRight(aux, v);
           break;
         }
-      }
+      } else break;
     } while (1);
   }
 }
 
-arvoreBin father(arvoreBin a) { return a->father; }
+void fusionRemove(arvoreBin *a) {
+  if (!(*a)) {
+    return;
+  } else {
+    // Nova raiz
+    nodo *fthr = (*a)->left;
+    // Sub arvore a ser fundida
+    arvoreBin rightTree = (*a)->right;
 
-int main() { return 0; }
+    // Caso a raiz antiga tenho um pai
+    if (father(*a)) {
+      // Ligando antigo pai a nova raiz
+      if (isLeft(*a))
+        (*a)->father->left = fthr ? fthr : rightTree;
+      else
+        (*a)->father->right = fthr ? fthr : rightTree;
+    }
+
+    // Se existir apenas a subarvore direita
+    if (!fthr) {
+      fthr = (*a)->right;
+      if (fthr) {
+        fthr->father = (*a)->father;
+      }
+    } else {
+      fthr->father = (*a)->father;
+      nodo *aux = fthr;
+      // Procurando folha mais a direita
+      while (aux->right) {
+        aux = aux->right;
+      }
+      // Linkando nova subarvore
+      aux->right = rightTree;
+      if (rightTree) {
+        rightTree->father = aux;
+      }
+    }
+    free(*a);
+    *a = fthr;
+  }
+}
+
+int main() {
+
+  // Declaração da árvore binária
+  arvoreBin tree;
+
+  // Criação da árvore com o nó raiz de valor 10
+  makeTree(&tree, 10);
+
+  // Inserindo elementos na árvore binária
+  ins_ele(&tree, 20);
+  ins_ele(&tree, 11);
+  ins_ele(&tree, 15);
+  ins_ele(&tree, 14);
+  ins_ele(&tree, 15);
+  ins_ele(&tree, 30);
+
+  // Testando percursos na árvore
+  printf("Pre-Order traversal: ");
+  preOrder(tree);
+  printf("\n");
+
+  printf("In-Order traversal: ");
+  inOrder(tree);
+  printf("\n");
+
+  printf("Post-Order traversal: ");
+  postOrder(tree);
+  printf("\n");
+
+  // Testando busca em largura
+  // printf("Busca em largura (Breadth-First Search): ");
+  // buscaLargura(tree);
+  // printf("\n");
+
+  fusionRemove(&tree);
+
+  printf("Busca em largura (Breadth-First Search): ");
+  buscaLargura(tree);
+  printf("\n");
+  return 0;
+}
