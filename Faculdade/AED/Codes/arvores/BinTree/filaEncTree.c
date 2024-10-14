@@ -1,6 +1,5 @@
 #include "arvoreBin.h"
 #include "fila.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 void cria(fila *f) {
@@ -69,16 +68,3 @@ void destruir(fila f) {
     free(aux);
   }
 }
-
-// void geraFila(fila *f, int m, int n) {
-//   if (m > n) {
-//     return;
-//   }
-//   if (m == n) {
-//     cria(f);
-//     ins(*f, m);
-//   } else {
-//     geraFila(f, m, n-1);
-//     ins(*f, n);
-//   }
-// }

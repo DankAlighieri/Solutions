@@ -82,8 +82,8 @@ void buscaLargura(arvoreBin a) {
       ins(leafQueue, right(auxLeaf));
     ret(leafQueue);
   }
+  destruir(leafQueue);
 }
-
 void preOrder(arvoreBin a) {
   if (a) {
     printf("%d ", a->info);
@@ -174,6 +174,46 @@ void fusionRemove(arvoreBin *a) {
   *a = fthr;
 }
 
+// Funcao do professor ** PRIORIDADE **
+void remocaoPorFusao(arvoreBin *a) {
+  if (*a) {
+    arvoreBin tmp = *a;
+
+    // Nao existe sub arvore a direita
+    if (!((*a)->right)) {
+      // Existe arvore a esquerda
+      if ((*a)->left) {
+        // Religando os ponteiros do pai
+        (*a)->left->father = (*a)->father;
+      }
+      // Atualizando a referencia da raiz da arvore
+      *a = (*a)->left;
+      // Existe sub arvore direita
+      // Nao existe sub arvore esquerda
+    } else if ((*a)->left == NULL) {
+      // Religando os ponteiros do pai da raiz da sub arvore direita
+      (*a)->right->father = (*a)->father;
+      // Atualizando a referencia da raiz da arvore
+      *a = (*a)->right;
+    } else {
+      tmp = (*a)->left;
+      // Procurando o nodo mais a direita da sub arvore esquerda
+      while (tmp->right) {
+        tmp = tmp->right;
+      }
+      // Fundindo ambas as arvores
+      tmp->right = (*a)->right;
+      // Atualizando o ponteiro do pai da arvore fundida
+      tmp->right->father = tmp;
+      // Voltando para a raiz
+      tmp = *a;
+      // Atualizando o ponteiro da raiz
+      *a = (*a)->left;
+    }
+    free(tmp);
+  }
+}
+
 void copyRemoval(arvoreBin *a) {
   if (!*a) {
     return;
@@ -211,6 +251,37 @@ void copyRemoval(arvoreBin *a) {
 
   free(*a);
   *a = sucessorImediato;
+}
+
+// Funcao do professor ** PRIORIDADE **
+void remocaoPorCopia(arvoreBin *a) {
+  if (*a) {
+    arvoreBin tmp = *a;
+    if (!((*a)->right)) {
+      if ((*a)->left) {
+        (*a)->left->father = (*a)->father;
+        *a = (*a)->left;
+      }
+    } else if ((*a)->left == NULL) {
+      (*a)->right->father = (*a)->father;
+      *a = (*a)->right;
+    } else {
+      tmp = (*a)->right;
+      while (tmp->left != NULL) {
+        tmp = tmp->left;
+      }
+      (*a)->info = tmp->info;
+      if (tmp->father == *a) {
+        tmp->father->right = tmp->right;
+        if (tmp->father->right)
+          tmp->father->right->father = tmp->father;
+      } else {
+        tmp->father->left = tmp->right;
+        if (tmp->right)
+          tmp->father->left->father = tmp->father;
+      }
+    }
+  }
 }
 
 int main() {

@@ -3,9 +3,7 @@
 
 typedef struct nodo {
     int info;
-    struct nodo *left;
-    struct nodo *father;
-    struct nodo *right;
+    struct nodo *left,*right, *father;
 } nodo;
 typedef nodo *arvoreBin;
 
@@ -20,5 +18,11 @@ arvoreBin father(arvoreBin);
 int isLeft(arvoreBin);
 int isRight(arvoreBin);
 void buscaLargura(arvoreBin);
+void preOrder(arvoreBin);
+void inOrder(arvoreBin);
+void postOrder(arvoreBin);
+void ins_ele(arvoreBin *, int);
+void fusionRemove(arvoreBin *);
+void copyRemoval(arvoreBin *);
 
 #endif
