@@ -88,60 +88,78 @@ void postOder(arvoreAVL a) {
   }
 }
 
-void rotacao_direita(arvoreAVL *a) {
-  arvoreAVL aux1, aux2;
-  aux1 = (*a)->left;
-  aux2 = aux1->right;
-  (*a)->left = aux2;
-  aux1->right = (*a);
-  if ((*a)->left == NULL) {
-    (*a)->alte = 0;
-  } else if ((*a)->left->alte > (*a)->left->altd) {
-    (*a)->alte = (*a)->left->alte + 1;
-  } else {
-    (*a)->alte = (*a)->left->altd + 1;
-  }
-  if ((*a)->right->alte > (*a)->right->altd) {
-    (*a)->altd = (*a)->right->alte + 1;
-  } else
-    (*a)->altd = (*a)->right->altd + 1;
-  *a = aux1;
-}
+// void rotacao_direita(arvoreAVL *a) {
+//   arvoreAVL aux1, aux2;
+//   aux1 = (*a)->left;
+//   aux2 = aux1->right;
+//   (*a)->left = aux2;
+//   aux1->right = (*a);
+//   if ((*a)->left == NULL) {
+//     (*a)->alte = 0;
+//   } else if ((*a)->left->alte > (*a)->left->altd) {
+//     (*a)->alte = (*a)->left->alte + 1;
+//   } else {
+//     (*a)->alte = (*a)->left->altd + 1;
+//   }
+//   if ((*a)->right->alte > (*a)->right->altd) {
+//     (*a)->altd = (*a)->right->alte + 1;
+//   } else
+//     (*a)->altd = (*a)->right->altd + 1;
+//   *a = aux1;
+// }
 
-void rotacao_esquerda(arvoreAVL *a) {
-  arvoreAVL novaRaiz, novoNeto;
-  novaRaiz = (*a)->right;
-  novoNeto = novaRaiz->left;
-  (*a)->right = novoNeto;
-  novaRaiz->left = (*a);
-  if (!(*a)->right) {
-    (*a)->altd = 0;
-  } else if ((*a)->right->alte > (*a)->right->altd)
-    (*a)->altd = (*a)->right->alte + 1;
-  else
-    (*a)->altd = (*a)->right->altd + 1;
-  if ((*a)->left->alte > (*a)->left->altd)
-    (*a)->alte = (*a)->left->alte + 1;
-  else
-    (*a)->alte = (*a)->left->altd + 1;
-  *a = novaRaiz;
-}
+// void rotacao_esquerda(arvoreAVL *a) {
+//   arvoreAVL novaRaiz, novoNeto;
+//   novaRaiz = (*a)->right;
+//   novoNeto = novaRaiz->left;
+//   (*a)->right = novoNeto;
+//   novaRaiz->left = (*a);
+//   if (!(*a)->right) {
+//     (*a)->altd = 0;
+//   } else if ((*a)->right->alte > (*a)->right->altd)
+//     (*a)->altd = (*a)->right->alte + 1;
+//   else
+//     (*a)->altd = (*a)->right->altd + 1;
+//   if ((*a)->left->alte > (*a)->left->altd)
+//     (*a)->alte = (*a)->left->alte + 1;
+//   else
+//     (*a)->alte = (*a)->left->altd + 1;
+//   *a = novaRaiz;
+// }
 
-void balanceamento(arvoreAVL *a) {
-  
-}
+/* TODO */
+
+void rotacaoDir(arvoreAVL *a) {}
+
+void rotacaoEsq(arvoreAVL *a) {}
+
+void balanceamento(arvoreAVL *a) {}
+
+/* TODO */
 
 void ins_ele(arvoreAVL *a, int x) {
   if (!a) {
     makeTree(a, x);
   } else {
     arvoreAVL aux = *a;
+    int FB;
     do {
+      /*
+        TODO
+
+        - Implementar incremento de altura 💹
+        - Verificacao de balanceamento ✅
+      */
       if (x < aux->info) {
         if (aux->left) {
           aux = aux->left;
         } else {
           setLeft(aux, x);
+          aux->alte++;
+          FB = aux->altd - aux->alte;
+          if (FB == 2 || FB == -2) {
+            balanceamento(a);
+          }
           break;
         }
       } else if (x > aux->info) {
@@ -149,10 +167,17 @@ void ins_ele(arvoreAVL *a, int x) {
           aux = aux->right;
         } else {
           setRight(aux, x);
+          aux->altd++;
+          FB = aux->altd - aux->alte;
+          if (FB == 2 || FB == -2) {
+            balanceamento(a);
+          }
           break;
         }
-      } else break;
-    } while(1);
+      } else
+        break;
+    } while (1);
   }
 }
 
+int main(int argc, char **argv) { return 0; }
