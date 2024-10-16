@@ -24,6 +24,9 @@ void rotacaoDir(arvoreAVL *);
 void rotacaoEsq(arvoreAVL *);
 void balanceamento(arvoreAVL *);
 
+int height(nodo *);
+void updateHeight(nodo *n);
+
 void ins_ele(arvoreAVL *, int);
 void fusionRemove(arvoreAVL *);
 void copyRemoval(arvoreAVL *);

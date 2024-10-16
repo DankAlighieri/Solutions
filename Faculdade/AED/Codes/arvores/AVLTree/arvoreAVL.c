@@ -1,5 +1,6 @@
 #include "arvoreAVL.h"
 #include "filaAVL.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib>
 
@@ -88,54 +89,80 @@ void postOder(arvoreAVL a) {
   }
 }
 
-// void rotacao_direita(arvoreAVL *a) {
-//   arvoreAVL aux1, aux2;
-//   aux1 = (*a)->left;
-//   aux2 = aux1->right;
-//   (*a)->left = aux2;
-//   aux1->right = (*a);
-//   if ((*a)->left == NULL) {
-//     (*a)->alte = 0;
-//   } else if ((*a)->left->alte > (*a)->left->altd) {
-//     (*a)->alte = (*a)->left->alte + 1;
-//   } else {
-//     (*a)->alte = (*a)->left->altd + 1;
-//   }
-//   if ((*a)->right->alte > (*a)->right->altd) {
-//     (*a)->altd = (*a)->right->alte + 1;
-//   } else
-//     (*a)->altd = (*a)->right->altd + 1;
-//   *a = aux1;
-// }
+void rotacaoEsq(arvoreAVL *a) {
+  arvoreAVL novaRaiz, novoNeto;
+  // Salvando endereco da nova raiz (no a direita da antiga raiz)
+  novaRaiz = (*a)->right;
+  // Salvando endereco do no a esquerda da nova raiz
+  novoNeto = novaRaiz->left;
+  // ligando novo no, caso exista, a a antiga raiz
+  (*a)->right = novoNeto;
+  // Ligando nova raiz a antiga raiz
+  novaRaiz->left = (*a);
+  // Caso nao existe sub arvore direita
+  if (!(*a)->right)
+    (*a)->altd = 0;
 
-// void rotacao_esquerda(arvoreAVL *a) {
-//   arvoreAVL novaRaiz, novoNeto;
-//   novaRaiz = (*a)->right;
-//   novoNeto = novaRaiz->left;
-//   (*a)->right = novoNeto;
-//   novaRaiz->left = (*a);
-//   if (!(*a)->right) {
-//     (*a)->altd = 0;
-//   } else if ((*a)->right->alte > (*a)->right->altd)
-//     (*a)->altd = (*a)->right->alte + 1;
-//   else
-//     (*a)->altd = (*a)->right->altd + 1;
-//   if ((*a)->left->alte > (*a)->left->altd)
-//     (*a)->alte = (*a)->left->alte + 1;
-//   else
-//     (*a)->alte = (*a)->left->altd + 1;
-//   *a = novaRaiz;
-// }
+  // Verificar altura direita e atribuir a raiz da sub arvore
+  else if ((*a)->right->alte > (*a)->right->altd)
+    (*a)->altd = (*a)->right->alte + 1;
+  else
+    (*a)->altd = (*a)->right->altd + 1;
+  // Verificar altura esquerda e atribuir a raiz da sub arvore
+  if ((*a)->left->alte > (*a)->left->altd)
+    (*a)->alte = (*a)->left->alte + 1;
+  else
+    (*a)->alte = (*a)->left->altd + 1;
+  *a = novaRaiz;
+}
+
+void rotacaoDir(arvoreAVL *a) {
+  arvoreAVL novaRaiz, novoNeto;
+  novaRaiz = (*a)->left;
+  novoNeto = novaRaiz->right;
+  (*a)->right = novoNeto;
+  novaRaiz->right = (*a);
+  if (!(*a)->left)
+    (*a)->alte = 0;
+  else if ((*a)->left->alte > (*a)->left->altd)
+    (*a)->alte = (*a)->left->alte + 1;
+  else
+    (*a)->alte = (*a)->left->altd + 1;
+  if ((*a)->right->alte > (*a)->right->altd)
+    (*a)->altd = (*a)->right->alte + 1;
+  else
+    (*a)->altd = (*a)->right->altd + 1;
+  *a = novaRaiz;
+}
+
+void balanceamento(arvoreAVL *a) {
+  int FBp, FBf;
+  FBp = (*a)->altd - (*a)->alte;
+  if (FBp == 2) {
+    FBf = (*a)->right->altd - (*a)->right->alte;
+    if (FBf < 0) {
+      rotacaoDir(&((*a)->right));
+    }
+    rotacaoEsq(a);
+  } else if (FBp == -2) {
+    FBf = (*a)->left->altd - (*a)->left->alte;
+    if (FBf > 0) {
+      rotacaoEsq(&((*a)->left));
+    }
+    rotacaoDir(a);
+  }
+}
 
 /* TODO */
 
-void rotacaoDir(arvoreAVL *a) {}
+int height(nodo *n) { return n ? max(n->alte, n->altd) + 1 : 0; }
 
-void rotacaoEsq(arvoreAVL *a) {}
-
-void balanceamento(arvoreAVL *a) {}
-
-/* TODO */
+void updateHeight(nodo *n) {
+  if (n) {
+    n->alte = n->left ? height(n->left) : 0;
+    n->altd = n->right ? height(n->right) : 0;
+  }
+}
 
 void ins_ele(arvoreAVL *a, int x) {
   if (!a) {
@@ -155,11 +182,7 @@ void ins_ele(arvoreAVL *a, int x) {
           aux = aux->left;
         } else {
           setLeft(aux, x);
-          aux->alte++;
-          FB = aux->altd - aux->alte;
-          if (FB == 2 || FB == -2) {
-            balanceamento(a);
-          }
+          updateHeight(aux);
           break;
         }
       } else if (x > aux->info) {
@@ -167,16 +190,17 @@ void ins_ele(arvoreAVL *a, int x) {
           aux = aux->right;
         } else {
           setRight(aux, x);
-          aux->altd++;
-          FB = aux->altd - aux->alte;
-          if (FB == 2 || FB == -2) {
-            balanceamento(a);
-          }
+          updateHeight(aux);
           break;
         }
       } else
         break;
     } while (1);
+
+    while (aux) {
+      updateHeight(aux);
+      balanceamento(&aux);
+    }
   }
 }
 
