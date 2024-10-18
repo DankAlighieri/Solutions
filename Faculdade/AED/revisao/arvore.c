@@ -217,11 +217,12 @@ void fusionRemove(arvore *a) {
       if (tmp->right)
         tmp->right->father = tmp;
       tmp = *a;
-      *a = tmp;
+      *a = (*a)->left;
     }
     free(tmp);
   }
 }
+
 void copyRemove(arvore *a) {
   if (*a) {
     arvore tmp = *a;
@@ -312,11 +313,11 @@ void balanceamento(arvore *a) {
       }
       rotacaoEsq(a);
     } else if (FBp == -2) {
-        FBf = (*a)->left->altd - (*a)->left->alte;
-        if (FBf >= 0) {
-            rotacaoEsq(&((*a)->left));
-        }
-        rotacaoDir(a);
+      FBf = (*a)->left->altd - (*a)->left->alte;
+      if (FBf >= 0) {
+        rotacaoEsq(&((*a)->left));
+      }
+      rotacaoDir(a);
     }
   }
 }
