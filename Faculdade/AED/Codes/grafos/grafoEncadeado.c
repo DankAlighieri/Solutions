@@ -3,6 +3,65 @@
 
 #define MAXNODES 500
 
+/*
+  TAD FILA
+*/
+
+typedef struct {
+  int indInformacao;
+  int indMemoria;
+} DADOS;
+typedef struct _nodo {
+  DADOS inf;
+  struct _nodo *next;
+} NODO;
+typedef struct {
+  NODO *inicio;
+  NODO *fim;
+} DESCRITOR;
+
+typedef DESCRITOR *fila;
+
+void cria_fila(fila *f) {
+  *f = (DESCRITOR *)malloc(sizeof(NODO));
+  if (!(*f))
+    return;
+  (*f)->inicio = (*f)->fim = NULL;
+}
+
+int eh_vazia(fila f) { return !f->inicio; }
+
+void ins(fila f, DADOS inf) {
+  NODO *novo = (NODO *)malloc(sizeof(DADOS));
+  if (!novo)
+    return;
+  novo->inf = inf;
+  novo->next = NULL;
+  if (!(f->inicio)) {
+    f->inicio = novo;
+  } else {
+    f->fim->next = novo;
+  }
+  f->fim = novo;
+}
+
+DADOS cons_ret(fila f) {
+  if (!(f->inicio)) {
+    puts("Vazia");
+  } else {
+    DADOS aux = f->inicio->inf;
+    NODO *aux2 = f->inicio;
+    f->inicio = f->inicio->next;
+    if (!(f->inicio)) {
+      f->fim = NULL;
+    }
+    free(aux2);
+    return aux;
+  }
+}
+
+/* TAD Grafo*/
+
 typedef struct {
   int info;
   int next;
@@ -258,6 +317,93 @@ int removNode(int *listaDeNodosVazios, listaDeNodos l, int *graph, int p) {
     }
   }
   return retorno;
+}
+
+/*
+  Realiza uma busca em largura baseado em um nodo origem escolhido.
+
+  @@l: Lista de nodos que armazena o grafo
+  @@G: Ponteiro para o primeiro elemento na lista de nodos de vertice
+  @@s: Nodo escolhido como origem para a busca em largura
+*/
+
+void buscaEmLargura(listaDeNodos l, int G, int s) {
+  int verticeAux, *distancia = NULL, *pai = NULL, *listaDeVertices = NULL,
+                  numeroDeVertices = 0, verticeAtual, indice;
+  char *cor = NULL;
+  fila Queue;
+  DADOS aux;
+  verticeAux = G;
+  // Inicializar o grafo para a busca
+  while (verticeAux >= 0) {
+
+    // inicializando os vetores;
+    ++numeroDeVertices;
+    distancia = (int *)realloc(distancia, numeroDeVertices * sizeof(int));
+    pai = (int *)realloc(pai, numeroDeVertices * sizeof(int));
+    cor = (char *)realloc(cor, numeroDeVertices * sizeof(char));
+    listaDeVertices =
+        (int *)realloc(listaDeVertices, numeroDeVertices * sizeof(int));
+
+    if (verticeAux != s) { // Inicializar os vertices a serem buscados
+      cor[numeroDeVertices - 1] = 'B';
+      distancia[numeroDeVertices - 1] = -1;
+      pai[numeroDeVertices - 1] = -1;
+    } else { // Eh o vertice escolhido como origem
+
+      // Indice de s na lista que armazena o grafo
+      indice = numeroDeVertices - 1;
+      cor[numeroDeVertices - 1] = 'C';
+      distancia[numeroDeVertices - 1] = 0;
+      pai[numeroDeVertices - 1] = -1;
+    }
+
+    // ????
+    listaDeVertices[numeroDeVertices - 1] = l[verticeAux].info;
+    verticeAux = l[verticeAux].next;
+  }
+  cria_fila(&Queue);
+
+  // Armazenando as informacoes do vertice origem
+  aux.indInformacao = s;
+  aux.indMemoria = indice;
+  // Primeiro elemento da fila sera s, o vertice escolhido como a origem
+  ins(Queue, aux);
+
+  while (!(eh_vazia(Queue))) {
+    // Recuperando informacoes do primeiro vertice na fila
+    aux = cons_ret(Queue);
+    // Informacao do vertice da fila
+    verticeAux = aux.indInformacao;
+    // Comecando do inicio da lista de Grafo
+    verticeAtual = G;
+    // resetando os indices
+    indice = -1;
+    // Procurando todos os vertices pertencentes ao Grafo que sao adjacentes ao vertice que foi retirado da fila
+    while (verticeAtual >= 0) {
+      indice++;
+      // Caso seja adjacente
+      if (adjacent(l, verticeAux, verticeAtual)) { 
+        // Caso nao tenha sido visitado nenhuma vez
+        if (cor[indice] == 'B') {
+          DADOS aux2;
+          cor[indice] = 'C';
+          // Atualizando sua distancia do vertice origem
+          distancia[indice] = distancia[aux.indMemoria] + 1;
+          // Setando seu predecessor
+          pai[indice] = verticeAux;
+          // Salvando suas informacoes na fila para ser verificado posteriormente
+          aux2.indInformacao = verticeAtual;
+          aux2.indMemoria = indice;
+          ins(Queue, aux2);
+        }
+      }
+      // Indo para o proximo vertice no grafo
+      verticeAtual = l[verticeAtual].next;
+    }
+    // Mudando a cor para preto para indicar que tudo ja foi feito aqui
+    cor[aux.indMemoria] = 'P';
+  }
 }
 
 int main() { return 0; }
