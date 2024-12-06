@@ -103,7 +103,7 @@ void joinwt(listaDeNodos l, int *listaNodosVazios, int a, int b, int wt) {
 // Lista para nodos vazios para arcos
 void criaListaNodosVazios(int *listaNodosVazios, listaDeNodos l) {
   int i;
-  for (i = 0; i < MAXNODES; i++)
+  for (i = 1; i < MAXNODES; i++)
     l[i - 1].next = i;
   l[i - 1].next = -1;
   *listaNodosVazios = 0;
@@ -197,7 +197,7 @@ char adjacent(listaDeNodos l, int p, int q) {
   while (arco >= 0 && l[arco].point != q) {
     arco = l[arco].next;
   }
-  return (arco >= 0) ? arco : -1;
+  return (arco >= 0) ? 1 : 0;
 }
 
 /*
@@ -379,11 +379,12 @@ void buscaEmLargura(listaDeNodos l, int G, int s) {
     verticeAtual = G;
     // resetando os indices
     indice = -1;
-    // Procurando todos os vertices pertencentes ao Grafo que sao adjacentes ao vertice que foi retirado da fila
+    // Procurando todos os vertices pertencentes ao Grafo que sao adjacentes ao
+    // vertice que foi retirado da fila
     while (verticeAtual >= 0) {
       indice++;
       // Caso seja adjacente
-      if (adjacent(l, verticeAux, verticeAtual)) { 
+      if (adjacent(l, verticeAux, verticeAtual)) {
         // Caso nao tenha sido visitado nenhuma vez
         if (cor[indice] == 'B') {
           DADOS aux2;
@@ -392,7 +393,8 @@ void buscaEmLargura(listaDeNodos l, int G, int s) {
           distancia[indice] = distancia[aux.indMemoria] + 1;
           // Setando seu predecessor
           pai[indice] = verticeAux;
-          // Salvando suas informacoes na fila para ser verificado posteriormente
+          // Salvando suas informacoes na fila para ser verificado
+          // posteriormente
           aux2.indInformacao = verticeAtual;
           aux2.indMemoria = indice;
           ins(Queue, aux2);

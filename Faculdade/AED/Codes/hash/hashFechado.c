@@ -62,8 +62,7 @@ void inserirHashQuadratico(TabelaHash t, int chave) {
 
 int buscarChaveLinear(TabelaHash t, int chave) {
   int pos = funcaoHashing(chave), i = 0;
-  while (i < tam && t[(pos + i) % tam].status != 'L' &&
-         t[(pos + i) % tam].chave != chave) {
+  while (i < tam && t[(pos + i) % tam].status != 'L' && t[(pos + i) % tam].chave != chave) {
     i++;
   }
   return (t[(pos + i) % tam].chave == chave && t[(pos + i) % tam].status == 'O')
